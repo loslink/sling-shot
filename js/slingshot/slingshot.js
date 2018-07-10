@@ -45,19 +45,6 @@ export default class Slingshot extends cax.Group {
 
     this.add(this.bg,this.sling)
 
-
-    // graphics
-    //   .beginPath()
-    //   .lineCap('round')
-    //   .moveTo(40, 75)
-    //   .lineTo(160, 75)
-    //   .lineWidth(10)
-    //   .strokeStyle('black')
-    //   .stroke()
-
-    // graphics.x = 200
-    // graphics.y = 200
-
     // graphics.rotation=90
 
     this.drawRubber()
