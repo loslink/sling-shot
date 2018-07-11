@@ -12,23 +12,11 @@ const stage = new cax.Stage()
 // const music = new Music()
 const info = wx.getSystemInfoSync()
 const screenHeight = info.windowHeight
+var worker = wx.createWorker('workers/request/index.js')  // 文件名指定 worker 的入口文件路径，绝对路径
 
 stage.add(bg)
 
 // stage.add(player.bulletGroup)
-
-// const graphics = new cax.Graphics()
-// graphics
-//   .beginPath()
-//   .arc(0, 0, 10, 0, Math.PI * 2)
-//   .closePath()
-//   .fillStyle('#ffffff')
-//   .fill()
-//   .strokeStyle('black')
-//   .stroke()
-
-// graphics.x = 200
-// graphics.y = 200
 
 // stage.add(graphics)
 
@@ -66,6 +54,9 @@ function update () {
   //   })
   // })
 
+  // worker.postMessage({
+  //   msg: { cityName: "", stationName: "贵阳" }// value是外界传过来的如：{cityName: "", stationName: "贵阳"}
+  // })
   requestAnimationFrame(update)
 }
 
