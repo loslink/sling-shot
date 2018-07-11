@@ -165,11 +165,10 @@ export default class Slingshot extends cax.Group {
   
   drawRubber() {
 
-    // graphics.clear()
+    graphics.clear()
   
     //前橡胶
     graphics
-      .clear()
       .beginPath()
       .lineCap('round')
       .moveTo(slingShotLeftX+20, slingShotTopY)
