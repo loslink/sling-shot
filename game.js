@@ -12,7 +12,7 @@ const stage = new cax.Stage()
 // const music = new Music()
 const info = wx.getSystemInfoSync()
 const screenHeight = info.windowHeight
-var worker = wx.createWorker('workers/request/index.js')  // 文件名指定 worker 的入口文件路径，绝对路径
+// var worker = wx.createWorker('workers/request/index.js')  // 文件名指定 worker 的入口文件路径，绝对路径
 
 stage.add(bg)
 
