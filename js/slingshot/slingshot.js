@@ -56,17 +56,20 @@ export default class Slingshot extends cax.Group {
     wx.onTouchStart(function (e) {
       touchX = e.touches[0].clientX
       touchY = e.touches[0].clientY
+      console.log("onTouchStart touchX:" + touchX)
     })
 
     wx.onTouchMove(function (e) {
       touchX = e.touches[0].clientX
       touchY = e.touches[0].clientY
+      console.log("onTouchMove touchX:" + touchX)
       // that.drawRubber()
     })
 
     wx.onTouchEnd(function (e) {
       touchX = e.touches[0].clientX
       touchY = e.touches[0].clientY
+      console.log("onTouchEnd touchX:" + touchX)
     })
   }
 
