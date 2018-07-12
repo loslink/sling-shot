@@ -165,6 +165,7 @@ export default class Slingshot extends cax.Group {
   
   drawRubber() {
 
+    graphics.cache(0, slingShotTopY-10, screenWidth, screenHeight)
     graphics.clear()
   
     //前橡胶
