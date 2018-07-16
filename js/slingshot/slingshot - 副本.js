@@ -1,7 +1,6 @@
 import cax from '../libs/cax'
 
 import BunblePoint from './bunblepoint.js'
-import Stone from './stone.js'
 const info = wx.getSystemInfoSync()
 const screenWidth = info.windowWidth
 const screenHeight = info.windowHeight
@@ -36,8 +35,6 @@ var startX, endX, startY, endY
 var targetX, targetY
 var targetWidthReal
 
-var stone
-
 
 export default class Slingshot extends cax.Group {
   constructor() {
@@ -45,7 +42,6 @@ export default class Slingshot extends cax.Group {
 
     that = this
     this.init()
-    stone = new Stone(screenWidth / 2, slingShotTopY)
     // bunblePoint.x=1001
     // bunblePoint.printX()
     this.bg = new cax.Bitmap(BG_IMG_SRC)
@@ -94,7 +90,7 @@ export default class Slingshot extends cax.Group {
       that.drawRubber()
       // console.log("onTouchEnd touchX:" + touchX)
     })
-    this.startShot()
+
     // cax.setInterval(function () {
     //   that.drawRubber()
     // }, 16)
@@ -219,15 +215,9 @@ export default class Slingshot extends cax.Group {
     // this.empty(); 
     this.remove(graphics)
     this.add(graphics)
-   
 
   }
 
-  startShot(){
-    this.remove(stone)
-    this.add(stone)
-    stone.start()
-  }
 
   update() {
 
