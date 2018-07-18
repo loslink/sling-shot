@@ -1,11 +1,13 @@
 import cax from './js/libs/cax'
 
 import Slingshot from './js/slingshot/slingshot'
+
 // import Player from './js/player'
 // import EnemyGroup from './js/enemy-group'
 // import Music from './js/music'
 
 const bg = new Slingshot()
+
 // const player = new Player()
 const stage = new cax.Stage()
 // const enemyGroup = new EnemyGroup()

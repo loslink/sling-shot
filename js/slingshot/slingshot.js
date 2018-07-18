@@ -1,6 +1,7 @@
 import cax from '../libs/cax'
 
 import BunblePoint from './bunblepoint.js'
+import Music from './music'
 import Stone from './stone.js'
 const info = wx.getSystemInfoSync()
 const screenWidth = info.windowWidth
@@ -28,29 +29,46 @@ var touchY = null
 
 var sx
 var centerPiW = 60
+var rubberHeight=8
 var bunblePoint = new BunblePoint()
+const music = new Music()
 var that
-
 var startX, endX, startY, endY
-
 var targetX, targetY
 var targetWidthReal
-
 var stone
 
+function onShotListenr(state) {
+  
+  //延时执行
+  setTimeout(function () {
+    that.getTargetPoint()
+  }, 500)
+  
+  if (state=='success'){
+    wx.showToast({
+      title: '成功',
+      duration: 1000
+    })
+    music.playExplosion()
+  }else{
+
+  }
+  console.log("state:" + state)
+} 
 
 export default class Slingshot extends cax.Group {
   constructor() {
     super()
 
     that = this
-    this.init()
-    stone = new Stone(screenWidth / 2, slingShotTopY)
-    // bunblePoint.x=1001
-    // bunblePoint.printX()
+
     this.bg = new cax.Bitmap(BG_IMG_SRC)
     this.sling = new cax.Bitmap(SLING_IMG_SRC)
     this.target = new cax.Bitmap(TARGET_IMG_SRC)
+    this.init()
+    stone = new Stone(screenWidth / 2, slingShotTopY)
+    stone.init(slingShotTopY, slingWidthReal, slingHeightReal, centerPiW, targetWidthReal)
 
     this.bg.scaleX = screenWidth / BG_WIDTH
     this.bg.scaleY = screenHeight / BG_HEIGHT
@@ -61,15 +79,8 @@ export default class Slingshot extends cax.Group {
     this.sling.x = slingShotLeftX
     this.sling.y = slingShotTopY
 
-    this.target.x = targetX
-    this.target.y = targetY
-
-    this.target.scaleX = screenWidth * 0.1 / TARGET_WIDTH
-    this.target.scaleY = screenWidth * 0.1 / TARGET_WIDTH
-
-
-    this.add(this.bg, this.sling, this.target)
-
+    this.add(this.bg, this.sling)
+    this.getTargetPoint()
     // graphics.rotation=90
 
     this.drawRubber()
@@ -94,14 +105,13 @@ export default class Slingshot extends cax.Group {
       that.drawRubber()
       // console.log("onTouchEnd touchX:" + touchX)
     })
-    this.startShot()
+    
     // cax.setInterval(function () {
     //   that.drawRubber()
     // }, 16)
   }
 
   init() {
-
 
     targetWidthReal = screenWidth * 0.1
     sx = (screenWidth / SLING_WIDTH) * 0.6
@@ -127,15 +137,26 @@ export default class Slingshot extends cax.Group {
     startY = screenHeight / 2;
     endY = screenHeight / 2 + 50;
 
-    this.getTargetPoint()
   }
 
   getTargetPoint() {
     targetX = (Math.random() * (endX - startX) + startX);
     targetY = (Math.random() * (endY - startY) + startY);
+
+    this.target.x = targetX
+    this.target.y = targetY
+
+    this.target.scaleX = screenWidth * 0.1 / TARGET_WIDTH
+    this.target.scaleY = screenWidth * 0.1 / TARGET_WIDTH
+
+    this.remove(this.target)
+    this.add(this.target)
   }
 
   touchUp() {
+
+    this.startShot(touchX, touchY)
+
     touchX = screenWidth / 2;
     touchY = slingShotTopY;
     leftCenterPiStartX = screenWidth / 2 - centerPiW / 2;
@@ -144,6 +165,7 @@ export default class Slingshot extends cax.Group {
     rightCenterPiEndX = screenWidth / 2 + centerPiW / 2;
     rightCenterPiEndY = slingShotTopY;
 
+   
     // touchCenterX = touchX - screenWidth / 2;
     // touchCenterY = touchY - screenHeight / 2;
 
@@ -168,6 +190,9 @@ export default class Slingshot extends cax.Group {
   }
 
   drawRubber() {
+
+    this.scaleX = 2
+    this.scaleY = 2
     graphics.cache(0, slingShotTopY - 10, screenWidth, screenHeight)
     graphics.clear()
 
@@ -177,7 +202,7 @@ export default class Slingshot extends cax.Group {
       .lineCap('round')
       .moveTo(slingShotLeftX + 20, slingShotTopY)
       .lineTo(touchX, touchY)
-      .lineWidth(10)
+      .lineWidth(rubberHeight)
       .strokeStyle('#FFFF00')
       .stroke()
 
@@ -187,7 +212,7 @@ export default class Slingshot extends cax.Group {
       .lineCap('round')
       .moveTo(touchX, touchY)
       .lineTo(slingShotLeftX + slingWidthReal - 20, slingShotTopY)
-      .lineWidth(10)
+      .lineWidth(rubberHeight)
       .strokeStyle('#FFFF00')
       .stroke()
 
@@ -219,14 +244,19 @@ export default class Slingshot extends cax.Group {
     // this.empty(); 
     this.remove(graphics)
     this.add(graphics)
-   
+
+    this.scaleX = 1
+    this.scaleY = 1
 
   }
 
-  startShot(){
+  startShot(x,y){
+    stone.onShotListenr(onShotListenr)
     this.remove(stone)
     this.add(stone)
-    stone.start()
+    stone.start(x, y, targetX, targetY)
+    music.playShoot()
+    
   }
 
   update() {
