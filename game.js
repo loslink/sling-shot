@@ -2,57 +2,35 @@ import cax from './js/libs/cax'
 
 import Slingshot from './js/slingshot/slingshot'
 
-// import Player from './js/player'
-// import EnemyGroup from './js/enemy-group'
-// import Music from './js/music'
+const slingshot = new Slingshot()
 
-const bg = new Slingshot()
-
-// const player = new Player()
 const stage = new cax.Stage()
-// const enemyGroup = new EnemyGroup()
-// const music = new Music()
 const info = wx.getSystemInfoSync()
 const screenHeight = info.windowHeight
+const screenWidth = info.windowWidth
+const scaleValue=4
 // var worker = wx.createWorker('workers/request/index.js')  // 文件名指定 worker 的入口文件路径，绝对路径
 
-stage.add(bg)
+const BG_IMG_SRC = 'images/ic_bg.jpg'
+const bg = new cax.Bitmap(BG_IMG_SRC)
+const BG_WIDTH = 1080
+const BG_HEIGHT = 1920
+bg.scaleX = screenWidth / BG_WIDTH
+bg.scaleY = screenHeight / BG_HEIGHT
 
-// stage.add(player.bulletGroup)
+stage.canvas.width = screenWidth * scaleValue 
+stage.canvas.height = screenHeight * scaleValue 
+stage.add(bg, slingshot)
 
-// stage.add(graphics)
-
-// let touchX = null
-// let touchY = null
-
-// wx.onTouchStart(function (e) {
-//   touchX = e.touches[0].clientX
-//   touchY = e.touches[0].clientY
-// })
-
-// wx.onTouchMove(function (e) {
-//   touchX = e.touches[0].clientX
-//   touchY = e.touches[0].clientY
-// })
+stage.scaleX = scaleValue
+stage.scaleY = scaleValue
 
 function update () {
   stage.update()
-  // bg.update()
-
-  // player.update()
-  // if (touchX !== null) {
-  //   player.x = touchX
-  //   player.y = touchY
-  // }
-  // enemyGroup.update()
-
+ 
   // enemyGroup.children.forEach(enemy => {
   //   player.bulletGroup.children.forEach(bullet => {
-  //     if (bullet.isCollideWith(enemy)) {
-  //       bullet.visible = false
-  //       enemy.explode()
-  //       music.playExplosion()
-  //     }
+
   //   })
   // })
 
@@ -61,18 +39,4 @@ function update () {
   // })
   requestAnimationFrame(update)
 }
-
 update()
-
-
-// const text = new cax.Text('powered by cax', {
-//     font: '20px Arial',
-//     color: '#42B035',
-//     baseline: 'top'
-//   })
-// text.y = screenHeight - 30
-// text.x = 4
-// text.alpha = 0.6
-// stage.add(text)
-
-// cax.To.get(text).to().x(100, 2000, cax.easing.elasticInOut).start()

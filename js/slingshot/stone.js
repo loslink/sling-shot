@@ -23,6 +23,7 @@ var centerPiW
 var baWid
 var stoneRadius=5
 var callback
+var shotHuan=0
 
 // function doSomething(callback) {
 //   callback('yes');
@@ -37,10 +38,13 @@ function getSecondZeroX(paA){
 * @return
 */
 function isShotSuccess(shotX, shotY, targetX, targetY, baWid) {
+  
   var distance = Math.sqrt((shotX - (targetX + baWid / 2)) * (shotX - (targetX + baWid / 2))+ (shotY - (targetY - baWid / 2)) * (shotY - (targetY - baWid / 2)));
   if (distance <= (baWid / 2 + stoneRadius * 0.3 / 2)) {
-    // shotHuan = 1 - (distance / (baWid / 2 + stoneRadius * 0.3 / 2));
+    shotHuan = 1 - (distance / (baWid / 2 + stoneRadius * 0.3 / 2));
     return true;
+  }else{
+    shotHuan = 0
   }
   return false;
 }
@@ -100,6 +104,7 @@ export default class Stone extends cax.Group {
     this.scaleX = 2
     this.scaleY = -2
     graphics.clear()
+    this.empty()
     if (this.stoneX != 0 && this.stoneY != 0) {
       graphics
         .beginPath()
@@ -142,18 +147,15 @@ export default class Stone extends cax.Group {
       this.stoneX = 0
       this.stoneY = 0
       this.getShotPoint()
-      
-      // animatorBomb.start();
       if (isShotSuccess(this.shotX, this.shotY, this.targetX, this.targetY, this.baWid)) {
         
-        this.callback('success');
+        this.callback('success', shotHuan);
       } else {
         this.callback('failure');
       }
     } else {
       this.stoneX = x + step;
       this.stoneY = paramB *  Math.sin(x / paramA);
-      // console.log("stoneY:" + stoneY)
     }
   }
 

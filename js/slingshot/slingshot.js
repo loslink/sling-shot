@@ -1,5 +1,10 @@
 import cax from '../libs/cax'
 
+import Test from './test.js'
+const test = new Test()
+import Score from './score.js'
+const score = new Score()
+const lianJiTxt = new Score()
 import BunblePoint from './bunblepoint.js'
 import Music from './music'
 import Stone from './stone.js'
@@ -8,11 +13,10 @@ const screenWidth = info.windowWidth
 const screenHeight = info.windowHeight
 const graphics = new cax.Graphics()
 
-const BG_IMG_SRC = 'images/ic_bg.jpg'
+
 const SLING_IMG_SRC = 'images/ic_slingshot.png'
 const TARGET_IMG_SRC = 'images/ic_ba.png'
-const BG_WIDTH = 1080
-const BG_HEIGHT = 1920
+
 const SLING_WIDTH = 363
 const SLING_HEIGHT = 367
 const TARGET_WIDTH = 74
@@ -37,9 +41,28 @@ var startX, endX, startY, endY
 var targetX, targetY
 var targetWidthReal
 var stone
+var scoreNum=0
+var oneMaxScore = 200;
+var lianjiCount = 0;
+var gameTime= 5*60 //秒
+const countTimeText=new Score()
 
-function onShotListenr(state) {
-  
+function countTime(){
+  var interval = setInterval(function () {
+
+    gameTime--;
+    that.drawCountTime(gameTime+'s')
+    console.log("gameTime:" + gameTime)
+    if (gameTime <= 0) {
+      clearInterval(interval);
+
+    }
+  }.bind(this), 1000);
+}
+
+
+function onShotListenr(state, shotHuan) {
+
   //延时执行
   setTimeout(function () {
     that.getTargetPoint()
@@ -47,12 +70,18 @@ function onShotListenr(state) {
   
   if (state=='success'){
     wx.showToast({
-      title: '成功',
-      duration: 1000
+      title: '射中',
+      duration: 500
     })
     music.playExplosion()
+    lianjiCount++;
+    scoreNum = scoreNum + (oneMaxScore * shotHuan * lianjiCount);
+    score.drawText('Score:' + Math.round(scoreNum))
+    if(lianjiCount>1){
+      lianJiTxt.drawText(lianjiCount+'连击')
+    }
   }else{
-
+    lianjiCount=0
   }
   console.log("state:" + state)
 } 
@@ -63,15 +92,12 @@ export default class Slingshot extends cax.Group {
 
     that = this
 
-    this.bg = new cax.Bitmap(BG_IMG_SRC)
+    
     this.sling = new cax.Bitmap(SLING_IMG_SRC)
     this.target = new cax.Bitmap(TARGET_IMG_SRC)
     this.init()
     stone = new Stone(screenWidth / 2, slingShotTopY)
     stone.init(slingShotTopY, slingWidthReal, slingHeightReal, centerPiW, targetWidthReal)
-
-    this.bg.scaleX = screenWidth / BG_WIDTH
-    this.bg.scaleY = screenHeight / BG_HEIGHT
 
     this.sling.scaleX = sx
     this.sling.scaleY = sx
@@ -79,12 +105,27 @@ export default class Slingshot extends cax.Group {
     this.sling.x = slingShotLeftX
     this.sling.y = slingShotTopY
 
-    this.add(this.bg, this.sling)
+    score.setOptions({
+      color: '#ffffff',
+      font: 30,
+      y: 80,
+    })
+    score.drawText('Score:0')
+
+    lianJiTxt.setOptions({
+      color: '#ff8800',
+      font: 20,
+      y:150,
+      lastAlpha: 0
+    })
+    lianJiTxt.drawText(' ')
+    this.add(this.sling, test, score, lianJiTxt)
     this.getTargetPoint()
     // graphics.rotation=90
 
     this.drawRubber()
 
+    countTime()
     wx.onTouchStart(function (e) {
       touchX = e.touches[0].clientX
       touchY = e.touches[0].clientY
@@ -189,11 +230,34 @@ export default class Slingshot extends cax.Group {
     rightCenterPiEndY = touchY - (B * C) / Math.sqrt(A2 * A2 + B * B);
   }
 
+  /**
+   * 倒计时
+   */
+  drawCountTime(value){
+    if (countTimeText!=null){
+      this.remove(countTimeText)
+    }
+    countTimeText.setOptions({
+      color: '#ffffff',
+      font: 20,
+      y: 30,
+      isAnim: false
+    })
+    countTimeText.drawText(value)
+    this.add(countTimeText)
+  }
+
+  /**
+   * 弹弓橡皮
+   */
   drawRubber() {
 
-    this.scaleX = 2
-    this.scaleY = 2
-    graphics.cache(0, slingShotTopY - 10, screenWidth, screenHeight)
+    if (graphics!=null){
+      this.remove(graphics)
+    }
+    // this.scaleX = 2
+    // this.scaleY = 2
+    // graphics.cache(0, slingShotTopY - 10, screenWidth, screenHeight)
     graphics.clear()
 
     //前橡胶
@@ -242,9 +306,10 @@ export default class Slingshot extends cax.Group {
       .fill();
 
     // this.empty(); 
-    this.remove(graphics)
+    // this.remove(graphics)
     this.add(graphics)
 
+    
     this.scaleX = 1
     this.scaleY = 1
 
