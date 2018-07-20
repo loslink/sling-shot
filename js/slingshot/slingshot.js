@@ -5,6 +5,8 @@ const test = new Test()
 import Score from './score.js'
 const score = new Score()
 const lianJiTxt = new Score()
+import StartButton from './button.js'
+const button = new StartButton()
 import BunblePoint from './bunblepoint.js'
 import Music from './music'
 import Stone from './stone.js'
@@ -46,19 +48,30 @@ var oneMaxScore = 200;
 var lianjiCount = 0;
 var gameTime= 5*60 //秒
 const countTimeText=new Score()
+var isStart=false
 
 function countTime(){
   var interval = setInterval(function () {
 
     gameTime--;
-    that.drawCountTime(gameTime+'s')
-    console.log("gameTime:" + gameTime)
-    if (gameTime <= 0) {
+    if (gameTime < 0) {
       clearInterval(interval);
-
+      that.showButton()
+      lianjiCount = 0
+      gameTime = 5 * 60
+    }else{
+      that.drawCountTime(gameTime + 's')
     }
   }.bind(this), 1000);
 }
+
+function clickListenr(state) {
+  if (state == 'tap') {
+    music.playShoot()
+  } else if (state == 'dismiss'){
+    that.dismissButton()
+  }
+} 
 
 
 function onShotListenr(state, shotHuan) {
@@ -92,7 +105,6 @@ export default class Slingshot extends cax.Group {
 
     that = this
 
-    
     this.sling = new cax.Bitmap(SLING_IMG_SRC)
     this.target = new cax.Bitmap(TARGET_IMG_SRC)
     this.init()
@@ -121,35 +133,52 @@ export default class Slingshot extends cax.Group {
     lianJiTxt.drawText(' ')
     this.add(this.sling, test, score, lianJiTxt)
     this.getTargetPoint()
-    // graphics.rotation=90
 
     this.drawRubber()
+    this.showButton()
+    
 
-    countTime()
     wx.onTouchStart(function (e) {
       touchX = e.touches[0].clientX
       touchY = e.touches[0].clientY
       that.getleftCenterPiStartPoint()
-      // console.log("onTouchStart touchX:" + touchX)
     })
 
     wx.onTouchMove(function (e) {
       touchX = e.touches[0].clientX
       touchY = e.touches[0].clientY
       that.getleftCenterPiStartPoint()
-      // console.log("onTouchMove touchX:" + touchX)
-      that.drawRubber()
+      if (isStart){
+        that.drawRubber()
+      }
+      
     })
 
     wx.onTouchEnd(function (e) {
-      that.touchUp()
-      that.drawRubber()
-      // console.log("onTouchEnd touchX:" + touchX)
+      
+      if (isStart) {
+        that.touchUp()
+        that.drawRubber()
+      }
     })
     
-    // cax.setInterval(function () {
-    //   that.drawRubber()
-    // }, 16)
+  }
+
+
+  dismissButton(){
+    isStart = true
+    countTime()
+    if (button != null) {
+      this.remove(button)
+    }
+  }
+
+  showButton() {
+    isStart = false
+    button.onClickListenr(clickListenr)
+    button.drawButton()
+    this.add(button)
+    
   }
 
   init() {
@@ -255,8 +284,6 @@ export default class Slingshot extends cax.Group {
     if (graphics!=null){
       this.remove(graphics)
     }
-    // this.scaleX = 2
-    // this.scaleY = 2
     // graphics.cache(0, slingShotTopY - 10, screenWidth, screenHeight)
     graphics.clear()
 
@@ -306,10 +333,8 @@ export default class Slingshot extends cax.Group {
       .fill();
 
     // this.empty(); 
-    // this.remove(graphics)
     this.add(graphics)
 
-    
     this.scaleX = 1
     this.scaleY = 1
 

@@ -40,3 +40,5 @@ function update () {
   requestAnimationFrame(update)
 }
 update()
+
+stage.scaleEventPoint(1/scaleValue, 1/scaleValue) 

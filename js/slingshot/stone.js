@@ -25,10 +25,6 @@ var stoneRadius=5
 var callback
 var shotHuan=0
 
-// function doSomething(callback) {
-//   callback('yes');
-// } 
-
 function getSecondZeroX(paA){
   return paA * Math.PI;
 }
@@ -40,8 +36,8 @@ function getSecondZeroX(paA){
 function isShotSuccess(shotX, shotY, targetX, targetY, baWid) {
   
   var distance = Math.sqrt((shotX - (targetX + baWid / 2)) * (shotX - (targetX + baWid / 2))+ (shotY - (targetY - baWid / 2)) * (shotY - (targetY - baWid / 2)));
-  if (distance <= (baWid / 2 + stoneRadius * 0.3 / 2)) {
-    shotHuan = 1 - (distance / (baWid / 2 + stoneRadius * 0.3 / 2));
+  if (distance <= (baWid / 2 + stoneRadius / 2)) {
+    shotHuan = 1 - (distance / (baWid / 2 + stoneRadius / 2));
     return true;
   }else{
     shotHuan = 0
@@ -129,9 +125,9 @@ export default class Stone extends cax.Group {
   }
 
    calcuPoints() {
-
+     this.getStoneRadius()
     var step = 1;
-     step = Math.abs(getSecondZeroX(this.paramA)) / (screenWidth / 9);
+     step = Math.abs(getSecondZeroX(this.paramA)) / (screenWidth / 6);
     if (this.touchX <= 0 && this.touchY <= 0) {//第三象限
       this.getNextPoint(this.stoneX, this.stoneY, step, this.paramA, this.paramB);
     }else if (this.touchX > 0 && this.touchY <= 0) {//第四象限
@@ -140,6 +136,9 @@ export default class Stone extends cax.Group {
 
   }
 
+  getStoneRadius(){
+    stoneRadius = (1-Math.abs(this.stoneX/getSecondZeroX(this.paramA))*0.7)*5
+  }
   getNextPoint( x, y,  step,  paramA,  paramB) {
     
     if (Math.abs(x) > Math.abs(getSecondZeroX(this.paramA) * 0.8)) {
