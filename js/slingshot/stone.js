@@ -137,7 +137,7 @@ export default class Stone extends cax.Group {
   }
 
   getStoneRadius(){
-    stoneRadius = (1-Math.abs(this.stoneX/getSecondZeroX(this.paramA))*0.7)*5
+    stoneRadius = (1-Math.abs(this.stoneX/getSecondZeroX(this.paramA))*0.8)*5
   }
   getNextPoint( x, y,  step,  paramA,  paramB) {
     
@@ -148,9 +148,9 @@ export default class Stone extends cax.Group {
       this.getShotPoint()
       if (isShotSuccess(this.shotX, this.shotY, this.targetX, this.targetY, this.baWid)) {
         
-        this.callback('success', shotHuan);
+        this.callback('success', shotHuan, this.shotX + screenWidth / 2, this.slingShotTopY-this.shotY);
       } else {
-        this.callback('failure');
+        this.callback('failure', 0, this.shotX + screenWidth / 2, this.slingShotTopY-this.shotY);
       }
     } else {
       this.stoneX = x + step;

@@ -7,6 +7,8 @@ const score = new Score()
 const lianJiTxt = new Score()
 import StartButton from './button.js'
 const button = new StartButton()
+import Bomb from './bomb.js'
+const bomb = new Bomb()
 import BunblePoint from './bunblepoint.js'
 import Music from './music'
 import Stone from './stone.js'
@@ -58,6 +60,7 @@ function countTime(){
       clearInterval(interval);
       that.showButton()
       lianjiCount = 0
+      scoreNum=0
       gameTime = 5 * 60
     }else{
       that.drawCountTime(gameTime + 's')
@@ -68,24 +71,25 @@ function countTime(){
 function clickListenr(state) {
   if (state == 'tap') {
     music.playShoot()
+    score.drawText('Score:' + Math.round(scoreNum))
   } else if (state == 'dismiss'){
     that.dismissButton()
   }
 } 
 
 
-function onShotListenr(state, shotHuan) {
+function onShotListenr(state, shotHuan,bombX,bombY) {
 
   //延时执行
   setTimeout(function () {
     that.getTargetPoint()
   }, 500)
-  
+  that.drawBomb(bombX, bombY)
   if (state=='success'){
-    wx.showToast({
-      title: '射中',
-      duration: 500
-    })
+    // wx.showToast({
+    //   title: '射中',
+    //   duration: 500
+    // })
     music.playExplosion()
     lianjiCount++;
     scoreNum = scoreNum + (oneMaxScore * shotHuan * lianjiCount);
@@ -137,7 +141,7 @@ export default class Slingshot extends cax.Group {
     this.drawRubber()
     this.showButton()
     
-
+    
     wx.onTouchStart(function (e) {
       touchX = e.touches[0].clientX
       touchY = e.touches[0].clientY
@@ -164,6 +168,13 @@ export default class Slingshot extends cax.Group {
     
   }
 
+  drawBomb(x,y){
+    if (bomb){
+      this.remove(bomb)
+    }
+    bomb.drawBomb(x, y)
+    this.add(bomb)
+  }
 
   dismissButton(){
     isStart = true
